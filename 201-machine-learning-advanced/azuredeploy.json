@@ -119,7 +119,7 @@
     },
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow(format)), 'kv', parameters('resourceSuffix'))]",
+      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'kv', parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the key vault."
       }
@@ -152,7 +152,7 @@
     },
     "applicationInsightsName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow(format)), 'ai', parameters('resourceSuffix'))]",
+      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'ai', parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of ApplicationInsights."
       }
@@ -175,7 +175,7 @@
     },
     "containerRegistryName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow(format)), 'cr', parameters('resourceSuffix'))]",
+      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'cr', parameters('resourceSuffix'))]",
       "metadata": {
         "description": "The container registry bind to the workspace."
       }
