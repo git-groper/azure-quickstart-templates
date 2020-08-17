@@ -12,9 +12,9 @@
       "type": "string",
       "defaultValue": "cds",
       "metadata": {
-        "description": "For storage account / app insights / key vault Name"
+        "description": "For [storage account / app insights / key vault] Name"
       }
-    }
+    },
     "location": {
       "type": "string",
       "allowedValues": [
