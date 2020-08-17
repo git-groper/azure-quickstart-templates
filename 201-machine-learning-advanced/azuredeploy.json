@@ -72,7 +72,7 @@
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow(format)), 'sa', parameters('resourceSuffix'))]",
+      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'sa', parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the storage account."
       }
