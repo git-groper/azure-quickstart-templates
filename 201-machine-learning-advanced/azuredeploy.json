@@ -72,7 +72,7 @@
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'sa', parameters('resourceSuffix'))]",
+      "defaultValue": "['sa', concat(uniqueString(resourceGroup().id, parameters('workspaceName')), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the storage account."
       }
@@ -119,7 +119,7 @@
     },
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'kv', parameters('resourceSuffix'))]",
+      "defaultValue": "['kv', concat(uniqueString(resourceGroup().id, parameters('workspaceName')), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the key vault."
       }
@@ -152,7 +152,7 @@
     },
     "applicationInsightsName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'ai', parameters('resourceSuffix'))]",
+      "defaultValue": "['ai', concat(uniqueString(resourceGroup().id, parameters('workspaceName')), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of ApplicationInsights."
       }
@@ -175,7 +175,7 @@
     },
     "containerRegistryName": {
       "type": "string",
-      "defaultValue": "[concat(uniqueString(resourceGroup().id, parameters('workspaceName')), 'cr', parameters('resourceSuffix'))]",
+      "defaultValue": "['cr', concat(uniqueString(resourceGroup().id, parameters('workspaceName')), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "The container registry bind to the workspace."
       }
