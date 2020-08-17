@@ -8,6 +8,13 @@
         "description": "Specifies the name of the Azure Machine Learning workspace."
       }
     },
+    "resourceSuffix": {
+      "type": "string",
+      "defaultValue": "cds",
+      "metadata": {
+        "description": "For storage account / app insights / key vault Name"
+      }
+    }
     "location": {
       "type": "string",
       "allowedValues": [
