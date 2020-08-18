@@ -321,7 +321,7 @@
     "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
     "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
     "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-    "vnet": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "vnet": "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-mlw-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet",
     "subnet": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
     "privateEndpointName": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
     "locationsPEAvailable": [
