@@ -584,7 +584,7 @@
       "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.api.azureml.ms', '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
+      "name": "[concat('privatelink.api.azureml.ms', '/', uniqueString(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
       "tags": "[parameters('tagValues')]",
       "location": "global",
       "dependsOn": [
@@ -602,7 +602,7 @@
       "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.notebooks.azure.net', '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
+      "name": "[concat('privatelink.notebooks.azure.net', '/', uniqueString(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
       "tags": "[parameters('tagValues')]",
       "location": "global",
       "dependsOn": [
