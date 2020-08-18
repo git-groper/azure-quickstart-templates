@@ -593,7 +593,7 @@
       ],
       "properties": {
         "virtualNetwork": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+          "id": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
         },
         "registrationEnabled": false
       }
@@ -611,7 +611,7 @@
       ],
       "properties": {
         "virtualNetwork": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+          "id": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
         },
         "registrationEnabled": false
       }
