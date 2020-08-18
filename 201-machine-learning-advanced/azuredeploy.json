@@ -321,8 +321,8 @@
     "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
     "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
     "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-    "vnet": "[resourceId('ski-dtinfra-test-adf-infra-rg', 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-    "subnet": "[resourceId('ski-dtinfra-test-adf-infra-rg', 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
+    "vnet": "[resourceId(subscription(), parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "subnet": "[resourceId(parameters(subscription(), 'vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
     "privateEndpointName": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
     "locationsPEAvailable": [
       "southcentralus",
