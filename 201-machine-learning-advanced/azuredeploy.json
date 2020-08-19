@@ -321,7 +321,7 @@
     "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
     "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
     "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-    "vnet": "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-adf-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet",
+    "vnet": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
     "subnet": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
     "privateEndpointName": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
     "locationsPEAvailable": [
@@ -335,7 +335,7 @@
       "virtualNetworkRules": [
         {
           "action": "Allow",
-          "id": "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-adf-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet/subnets/ski-dtinfra-test-koce-001-subnet"
+          "id": "[variables('subnet')]"
         }
       ]
     },
@@ -356,13 +356,78 @@
   },
   "resources": [
     {
+      "condition": "[and(variables('enablePE'), equals(parameters('vnetOption'), 'new'))]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('vnetName')]",
+      "tags": "[parameters('tagValues')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": "[parameters('addressPrefixes')]"
+        },
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "condition": "[and(variables('enablePE'), equals(parameters('subnetOption'), 'new'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
+      "dependsOn": [
+        "[variables('vnet')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('subnetPrefix')]",
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled",
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Storage"
+          },
+          {
+            "service": "Microsoft.KeyVault"
+          },
+          {
+            "service": "Microsoft.ContainerRegistry"
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "UpdateSubnetPolicy",
+      "dependsOn": [
+        "[variables('subnet')]"
+      ],
+      "resourceGroup": "[parameters('vnetResourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2019-09-01",
+              "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
+              "properties": "[if(and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none'))), union(reference(variables('subnet'), '2019-09-01'), variables('subnetPolicyForPE')), json('null'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
       "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2019-04-01",
       "name": "[parameters('storageAccountName')]",
       "tags": "[parameters('tagValues')]",
       "dependsOn": [
-        "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-adf-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet/subnets/ski-dtinfra-test-koce-001-subnet"
+        "[variables('subnet')]"
       ],
       "location": "[parameters('location')]",
       "sku": {
@@ -390,7 +455,7 @@
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2019-09-01",
       "dependsOn": [
-        "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-adf-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet/subnets/ski-dtinfra-test-koce-001-subnet"
+        "[variables('subnet')]"
       ],
       "name": "[parameters('keyVaultName')]",
       "tags": "[parameters('tagValues')]",
@@ -412,7 +477,7 @@
       "name": "[parameters('containerRegistryName')]",
       "tags": "[parameters('tagValues')]",
       "dependsOn": [
-        "/subscriptions/2849d3c2-eddb-477d-9da4-c2e9c4bdeda1/resourceGroups/ski-dtinfra-test-adf-infra-rg/providers/Microsoft.Network/virtualNetworks/dtinfra-test-001-vnet/subnets/ski-dtinfra-test-koce-001-subnet"
+        "[variables('subnet')]"
       ],
       "location": "[parameters('location')]",
       "sku": {
@@ -473,6 +538,25 @@
       }
     },
     {
+      "condition": "[and(variables('enablePE'), not(equals(parameters('privateEndpointType'), 'none')))]",
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "tags": "[parameters('tagValues')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+        "[variables('subnet')]"
+      ],
+      "properties": {
+        "privateLinkServiceConnections": "[if(equals(parameters('privateEndpointType'), 'AutoApproval'), variables('defaultPEConnections'), json('null'))]",
+        "manualPrivateLinkServiceConnections": "[if(equals(parameters('privateEndpointType'), 'ManualApproval'), variables('defaultPEConnections'), json('null'))]",
+        "subnet": {
+          "id": "[variables('subnet')]"
+        }
+      }
+    },
+    {
       "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
       "type": "Microsoft.Network/privateDnsZones",
       "apiVersion": "2018-09-01",
@@ -495,6 +579,42 @@
       ],
       "location": "global",
       "properties": {}
+    },
+    {
+      "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.api.azureml.ms', '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
+      "tags": "[parameters('tagValues')]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceid('Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
+        "privatelink.api.azureml.ms"
+      ],
+      "properties": {
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+        },
+        "registrationEnabled": false
+      }
+    },
+    {
+      "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.notebooks.azure.net', '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))))]",
+      "tags": "[parameters('tagValues')]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceid('Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]",
+        "privatelink.notebooks.azure.net"
+      ],
+      "properties": {
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+        },
+        "registrationEnabled": false
+      }
     },
     {
       "condition": "[and(variables('enablePE'), equals(parameters('privateEndpointType'), 'AutoApproval'))]",
