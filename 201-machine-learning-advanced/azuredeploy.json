@@ -8,6 +8,12 @@
         "description": "Specifies the name of the Azure Machine Learning workspace."
       }
     },
+    "resourceSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "For [storage account / app insights / key vault] Name."
+      }
+    },
     "location": {
       "type": "string",
       "allowedValues": [
@@ -66,7 +72,7 @@
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[concat('sa',uniqueString(resourceGroup().id, parameters('workspaceName')))]",
+      "defaultValue": "[concat('sa', uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow()), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the storage account."
       }
@@ -113,7 +119,7 @@
     },
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "[concat('kv',uniqueString(resourceGroup().id, parameters('workspaceName')))]",
+      "defaultValue": "[concat('kv', uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow()), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of the key vault."
       }
@@ -146,7 +152,7 @@
     },
     "applicationInsightsName": {
       "type": "string",
-      "defaultValue": "[concat('ai',uniqueString(resourceGroup().id, parameters('workspaceName')))]",
+      "defaultValue": "[concat('ai', uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow()), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "Name of ApplicationInsights."
       }
@@ -169,7 +175,7 @@
     },
     "containerRegistryName": {
       "type": "string",
-      "defaultValue": "[concat('cr',uniqueString(resourceGroup().id, parameters('workspaceName')))]",
+      "defaultValue": "[concat('cr', uniqueString(resourceGroup().id, parameters('workspaceName'), utcNow()), parameters('resourceSuffix'))]",
       "metadata": {
         "description": "The container registry bind to the workspace."
       }
